@@ -41,6 +41,21 @@
       font-size: 28px;
       font-weight: bold;
     }
+
+    .producto {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .precio {
+      font-size: 24px;
+    }
+
+    .error {
+      color: #b00020;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -58,18 +73,80 @@
 
   <script>
 
-    function escaneoExitoso(codigo) {
+    const URL_APPS_SCRIPT =
+      "https://script.google.com/macros/s/AKfycbwSOib7-PmhWK2_1OzvsvOM05CGLCTaTyuRlvTyh-eUG1bUksRPt-6ou5aZo0xjO-tNzQ/exec";
+
+    let procesando = false;
+
+    function registrarEnInventario(codigo) {
+
+      if (procesando) return;
+
+      procesando = true;
 
       document.getElementById("resultado").innerHTML =
-        "<div>✅ CÓDIGO LEÍDO</div>" +
-        "<div class='codigo'>" + codigo + "</div>";
+        "⏳ Registrando venta...";
 
-      console.log("Código leído:", codigo);
+      const callback = "respuestaVenta";
+
+      window[callback] = function(data) {
+
+        if (data.ok) {
+
+          document.getElementById("resultado").innerHTML = `
+            <div>✅ VENTA REGISTRADA</div>
+
+            <div class="producto">
+              ${data.producto}
+            </div>
+
+            <div class="precio">
+              $${Number(data.precio).toLocaleString('es-CO')}
+            </div>
+
+            <div>
+              Stock restante:
+              <strong>${data.stock}</strong>
+            </div>
+          `;
+
+        } else {
+
+          document.getElementById("resultado").innerHTML = `
+            <div class="error">⚠️ ${data.mensaje}</div>
+            <div>${data.codigo || ''}</div>
+          `;
+
+        }
+
+        setTimeout(function() {
+          procesando = false;
+        }, 1500);
+      };
+
+      const script = document.createElement("script");
+
+      script.src =
+        URL_APPS_SCRIPT +
+        "?codigo=" + encodeURIComponent(codigo) +
+        "&callback=" + callback +
+        "&t=" + Date.now();
+
+      document.body.appendChild(script);
     }
+
+
+    function escaneoExitoso(codigo) {
+
+      registrarEnInventario(codigo);
+
+    }
+
 
     function errorEscaneo(error) {
-      // Ignoramos errores normales mientras busca un QR
+      // Ignoramos los errores normales mientras busca un QR
     }
+
 
     const scanner = new Html5QrcodeScanner(
       "reader",
@@ -82,6 +159,7 @@
       },
       false
     );
+
 
     scanner.render(
       escaneoExitoso,
