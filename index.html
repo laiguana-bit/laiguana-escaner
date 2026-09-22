@@ -234,26 +234,127 @@ background:white;
       });
 
 
-    /* =========================
-       RECORDAR CANAL
-       ========================= */
+   /* =========================
+   CANALES
+   ========================= */
 
-    const canalGuardado =
-      localStorage.getItem("canalLaIguana");
+const selectCanal =
+  document.getElementById("canal");
 
-    if (canalGuardado) {
-      document.getElementById("canal").value =
-        canalGuardado;
-    }
+const inputNuevoCanal =
+  document.getElementById("nuevoCanal");
 
-    document.getElementById("canal")
-      .addEventListener("change", function() {
 
-        localStorage.setItem(
-          "canalLaIguana",
-          this.value
-        );
-      });
+// Cargar canales guardados
+const canalesGuardados =
+  JSON.parse(
+    localStorage.getItem("canalesLaIguana") || "[]"
+  );
+
+
+// Agregar canales guardados al selector
+canalesGuardados.forEach(function(canal) {
+
+  agregarOpcionCanal(canal);
+
+});
+
+
+// Canal empieza vacío
+selectCanal.value = "";
+
+
+// Guardar canal seleccionado
+selectCanal.addEventListener(
+  "change",
+  function() {
+
+    localStorage.setItem(
+      "canalLaIguana",
+      this.value
+    );
+
+  }
+);
+
+
+// Crear opción en el selector
+function agregarOpcionCanal(canal) {
+
+  const opcion =
+    document.createElement("option");
+
+  opcion.value = canal;
+  opcion.textContent = canal;
+
+  selectCanal.appendChild(opcion);
+}
+
+
+// Añadir nuevo canal
+function agregarCanal() {
+
+  const nuevo =
+    inputNuevoCanal.value.trim();
+
+  if (!nuevo) {
+    return;
+  }
+
+
+  // Evitar duplicados
+  const existe =
+    Array.from(
+      selectCanal.options
+    ).some(function(opcion) {
+
+      return opcion.value.toLowerCase()
+        === nuevo.toLowerCase();
+
+    });
+
+
+  if (existe) {
+
+    selectCanal.value =
+      Array.from(selectCanal.options)
+        .find(function(opcion) {
+
+          return opcion.value.toLowerCase()
+            === nuevo.toLowerCase();
+
+        }).value;
+
+    inputNuevoCanal.value = "";
+
+    return;
+  }
+
+
+  // Añadir al selector
+  agregarOpcionCanal(nuevo);
+
+
+  // Guardar en lista permanente
+  canalesGuardados.push(nuevo);
+
+  localStorage.setItem(
+    "canalesLaIguana",
+    JSON.stringify(canalesGuardados)
+  );
+
+
+  // Seleccionarlo automáticamente
+  selectCanal.value = nuevo;
+
+  localStorage.setItem(
+    "canalLaIguana",
+    nuevo
+  );
+
+
+  inputNuevoCanal.value = "";
+}
 
 
     /* =========================
