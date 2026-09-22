@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
   <meta charset="UTF-8">
@@ -37,6 +38,7 @@
       font-size: 20px;
     }
   </style>
+
 </head>
 
 <body>
@@ -45,141 +47,221 @@
 
   <p>Escanea un producto</p>
 
+  <!-- CANAL -->
+
+<label for="canal"><strong>Canal:</strong></label>
+
+<select
+id="canal"
+style="
+width:100%;
+padding:12px;
+font-size:18px;
+margin:10px 0;
+border-radius:8px;
+"
+
+>
+
+```
+<option value="Coventalia">Coventalia</option>
+```
+
+```
+<option value="SOFA">SOFA</option>
+<option value="Comic-Con">Comic-Con</option>
+<option value="Lupicon">Lupicon</option>
+```
+
+  </select>
+
+  <!-- VENDEDOR -->
+
 <label for="vendedor"><strong>Vendedor:</strong></label>
 
 <select
-  <label for="canal"><strong>Canal:</strong></label>
+id="vendedor"
+style="
+width:100%;
+padding:12px;
+font-size:18px;
+margin:10px 0;
+border-radius:8px;
+"
 
-<select
-  id="canal"
-  style="
-    width:100%;
-    padding:12px;
-    font-size:18px;
-    margin-bottom:15px;
-  "
 >
-  <option value="Coventalia">Coventalia</option>
-  <option value="SOFA">SOFA</option>
-  <option value="Comic-Con">Comic-Con</option>
-  <option value="Lupicon">Lupicon</option>
-</select>
-  id="vendedor"
-  style="
-    margin:10px;
-    padding:10px;
-    font-size:18px;
-    border-radius:8px;
-  "
->
-  <option value="Isa">Isa</option>
-  <option value="Caal">Caal</option>
-  <option value="Veyi">Veyi</option>
-  <option value="Wano">Wano</option>
-  <option value="Anon">Anon</option>
-</select>
+
+```
+<option value="Isa">Isa</option>
+```
+
+```
+<option value="Caal">Caal</option>
+<option value="Veyi">Veyi</option>
+<option value="Wano">Wano</option>
+<option value="Anon">Anon</option>
+```
+
+  </select>
 
   <div id="reader"></div>
 
- <div id="resultado">
-  Esperando escaneo...
-</div>
+  <div id="resultado">
+    Esperando escaneo...
+  </div>
 
 <button
-  onclick="probarConexion()"
-  style="
-    margin:20px;
-    padding:15px 25px;
-    font-size:18px;
-    border-radius:10px;
-    border:1px solid #ccc;
-    background:white;
-  "
+onclick="probarConexion()"
+style="
+margin:20px;
+padding:15px 25px;
+font-size:18px;
+border-radius:10px;
+border:1px solid #ccc;
+background:white;
+"
+
 >
-  🔌 Probar conexión
-</button>
+
+```
+🔌 Probar conexión
+```
+
+  </button>
 
   <script>
 
     const URL_APPS_SCRIPT =
       "https://script.google.com/macros/s/AKfycbzl3WF6dqG8T2UpOOG0RsDtjHILX1dNnrQcfsxrtAlb4FpbXcvGeXWdCtQTzbuV19bNpQ/exec";
 
-function probarConexion() {
 
-  document.getElementById("resultado").innerHTML =
-    "⏳ Probando conexión...";
+    /* =========================
+       CONEXIÓN DE PRUEBA
+       ========================= */
 
-  const callback = "pruebaConexion_" + Date.now();
+    function probarConexion() {
 
-  window[callback] = function(data) {
+      document.getElementById("resultado").innerHTML =
+        "⏳ Probando conexión...";
 
-    document.getElementById("resultado").innerHTML =
-      data.ok
-        ? "✅ CONEXIÓN CORRECTA"
-        : "⚠️ Respuesta recibida";
+      const callback = "pruebaConexion_" + Date.now();
 
-    delete window[callback];
+      window[callback] = function(data) {
 
-    if (script.parentNode) {
-      script.parentNode.removeChild(script);
+        document.getElementById("resultado").innerHTML =
+          data.ok
+            ? "✅ CONEXIÓN CORRECTA"
+            : "⚠️ Respuesta recibida";
+
+        delete window[callback];
+
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      };
+
+      const script = document.createElement("script");
+
+      script.onerror = function() {
+
+        document.getElementById("resultado").innerHTML =
+          "❌ No se pudo recibir la respuesta";
+
+        delete window[callback];
+
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      };
+
+      script.src =
+        "https://script.google.com/macros/s/AKfycbwSOib7-PmhWK2_1OzvsvOM05CGLCTaTyuRlvTyh-eUG1bUksRPt-6ou5aZo0xjO-tNzQ/exec" +
+        "?prueba=1" +
+        "&callback=" + callback +
+        "&t=" + Date.now();
+
+      document.body.appendChild(script);
     }
-  };
 
-  const script = document.createElement("script");
 
-  script.onerror = function() {
+    /* =========================
+       RECORDAR VENDEDOR
+       ========================= */
 
-    document.getElementById("resultado").innerHTML =
-      "❌ No se pudo recibir la respuesta";
-
-    delete window[callback];
-
-    if (script.parentNode) {
-      script.parentNode.removeChild(script);
-    }
-  };
-
-  script.src =
-    "https://script.google.com/macros/s/AKfycbwSOib7-PmhWK2_1OzvsvOM05CGLCTaTyuRlvTyh-eUG1bUksRPt-6ou5aZo0xjO-tNzQ/exec" +
-    "?prueba=1" +
-    "&callback=" + callback +
-    "&t=" + Date.now();
-
-  document.body.appendChild(script);
-}
     const vendedorGuardado =
-  localStorage.getItem("vendedorLaIguana");
+      localStorage.getItem("vendedorLaIguana");
 
-if (vendedorGuardado) {
-  document.getElementById("vendedor").value = vendedorGuardado;
-}
-    document.getElementById("vendedor").addEventListener("change", function() {
-  localStorage.setItem(
-    "vendedorLaIguana",
-    this.value
-  );
-});
-  let escaneoBloqueado = false;
-let ultimoCodigo = "";
-let ultimoEscaneo = 0;
+    if (vendedorGuardado) {
+      document.getElementById("vendedor").value =
+        vendedorGuardado;
+    }
+
+    document.getElementById("vendedor")
+      .addEventListener("change", function() {
+
+        localStorage.setItem(
+          "vendedorLaIguana",
+          this.value
+        );
+      });
+
+
+    /* =========================
+       RECORDAR CANAL
+       ========================= */
+
+    const canalGuardado =
+      localStorage.getItem("canalLaIguana");
+
+    if (canalGuardado) {
+      document.getElementById("canal").value =
+        canalGuardado;
+    }
+
+    document.getElementById("canal")
+      .addEventListener("change", function() {
+
+        localStorage.setItem(
+          "canalLaIguana",
+          this.value
+        );
+      });
+
+
+    /* =========================
+       CONTROL DE ESCANEOS
+       ========================= */
+
+    let escaneoBloqueado = false;
+    let ultimoCodigo = "";
+    let ultimoEscaneo = 0;
+
+
+    /* =========================
+       REGISTRAR VENTA
+       ========================= */
+
     function escaneoExitoso(codigo) {
+
       const ahora = Date.now();
 
-if (
-  escaneoBloqueado ||
-  (codigo === ultimoCodigo && ahora - ultimoEscaneo < 4000)
-) {
-  return;
-}
+      if (
+        escaneoBloqueado ||
+        (codigo === ultimoCodigo &&
+         ahora - ultimoEscaneo < 4000)
+      ) {
+        return;
+      }
 
-escaneoBloqueado = true;
-ultimoCodigo = codigo;
-ultimoEscaneo = ahora;
+      escaneoBloqueado = true;
+      ultimoCodigo = codigo;
+      ultimoEscaneo = ahora;
 
       document.getElementById("resultado").innerHTML =
         "⏳ Registrando venta...";
 
-      const callback = "respuestaVenta_" + Date.now();
+      const callback =
+        "respuestaVenta_" + Date.now();
 
       window[callback] = function(data) {
 
@@ -194,10 +276,6 @@ ultimoEscaneo = ahora;
               margin:10px 0;
             ">
               ${data.producto}
-            </div>
-
-            <div style="font-size:24px;">
-              $${Number(data.precio).toLocaleString('es-CO')}
             </div>
 
             <div>
@@ -223,9 +301,10 @@ ultimoEscaneo = ahora;
         }
 
         delete window[callback];
+
         setTimeout(() => {
-  escaneoBloqueado = false;
-}, 4000);
+          escaneoBloqueado = false;
+        }, 4000);
 
         if (script.parentNode) {
           script.parentNode.removeChild(script);
@@ -248,9 +327,10 @@ ultimoEscaneo = ahora;
         `;
 
         delete window[callback];
+
         setTimeout(() => {
-  escaneoBloqueado = false;
-}, 4000);
+          escaneoBloqueado = false;
+        }, 4000);
 
         if (script.parentNode) {
           script.parentNode.removeChild(script);
@@ -258,27 +338,49 @@ ultimoEscaneo = ahora;
       };
 
 
-    const vendedor =
-  document.getElementById("vendedor").value;
+      const vendedor =
+        document.getElementById("vendedor").value;
 
-localStorage.setItem("vendedorLaIguana", vendedor);
+      const canal =
+        document.getElementById("canal").value;
 
-script.src =
-  URL_APPS_SCRIPT +
-  "?codigo=" + encodeURIComponent(codigo) +
-  "&vendedor=" + encodeURIComponent(vendedor) +
-  "&callback=" + callback +
-  "&t=" + Date.now();
+
+      localStorage.setItem(
+        "vendedorLaIguana",
+        vendedor
+      );
+
+      localStorage.setItem(
+        "canalLaIguana",
+        canal
+      );
+
+
+      script.src =
+        URL_APPS_SCRIPT +
+        "?codigo=" + encodeURIComponent(codigo) +
+        "&vendedor=" + encodeURIComponent(vendedor) +
+        "&canal=" + encodeURIComponent(canal) +
+        "&callback=" + callback +
+        "&t=" + Date.now();
 
 
       document.body.appendChild(script);
     }
 
 
+    /* =========================
+       ERRORES NORMALES DEL ESCÁNER
+       ========================= */
+
     function errorEscaneo(error) {
       // Ignoramos los errores normales mientras busca un QR
     }
 
+
+    /* =========================
+       ESCÁNER QR
+       ========================= */
 
     const scanner = new Html5QrcodeScanner(
       "reader",
