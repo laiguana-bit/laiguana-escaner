@@ -80,50 +80,63 @@
 
     function registrarEnInventario(codigo) {
 
-      if (procesando) return;
+  if (procesando) return;
 
-      procesando = true;
+  procesando = true;
 
-      document.getElementById("resultado").innerHTML =
-        "⏳ Registrando venta...";
+  document.getElementById("resultado").innerHTML =
+    "⏳ Registrando venta...";
 
-     const callback = "pruebaConexion_" + Date.now();
+  const callback = "respuestaVenta_" + Date.now();
 
-      window[callback] = function(data) {
+  window[callback] = function(data) {
 
-        if (data.ok) {
+    if (data.ok) {
 
-          document.getElementById("resultado").innerHTML = `
-            <div>✅ VENTA REGISTRADA</div>
+      document.getElementById("resultado").innerHTML = `
+        <div>✅ VENTA REGISTRADA</div>
 
-            <div class="producto">
-              ${data.producto}
-            </div>
+        <div class="producto">
+          ${data.producto}
+        </div>
 
-            <div class="precio">
-              $${Number(data.precio).toLocaleString('es-CO')}
-            </div>
+        <div class="precio">
+          $${Number(data.precio).toLocaleString('es-CO')}
+        </div>
 
-            <div>
-              Stock restante:
-              <strong>${data.stock}</strong>
-            </div>
-          `;
+        <div>
+          Stock restante:
+          <strong>${data.stock}</strong>
+        </div>
+      `;
 
-        } else {
+    } else {
 
-          document.getElementById("resultado").innerHTML = `
-            <div class="error">⚠️ ${data.mensaje}</div>
-            <div>${data.codigo || ''}</div>
-          `;
+      document.getElementById("resultado").innerHTML = `
+        <div class="error">⚠️ ${data.mensaje}</div>
+        <div>${data.codigo || ''}</div>
+      `;
+    }
 
-        }
+    procesando = false;
 
-        setTimeout(function() {
-          procesando = false;
-        }, 1500);
-      };
+    delete window[callback];
 
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+  const script = document.createElement("script");
+
+  script.src =
+    URL_APPS_SCRIPT +
+    "?codigo=" + encodeURIComponent(codigo) +
+    "&callback=" + callback +
+    "&t=" + Date.now();
+
+  document.body.appendChild(script);
+}
       const script = document.createElement("script");
 
       script.src =
