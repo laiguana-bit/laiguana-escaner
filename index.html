@@ -474,7 +474,141 @@ function agregarCanal() {
     </button>
   `;
 }
+/* =========================
+   CONFIRMAR VENTA
+   ========================= */
 
+function confirmarVenta(codigo) {
+
+  document.getElementById("resultado").innerHTML =
+    "⏳ Registrando venta...";
+
+  const callback =
+    "respuestaVenta_" + Date.now();
+
+  window[callback] = function(data) {
+
+    if (data.ok) {
+
+      document.getElementById("resultado").innerHTML = `
+        <div>✅ VENTA REGISTRADA</div>
+
+        <div style="
+          font-size:28px;
+          font-weight:bold;
+          margin:10px 0;
+        ">
+          ${data.producto}
+        </div>
+
+        <div>
+          Stock restante:
+          <strong>${data.stock}</strong>
+        </div>
+      `;
+
+    } else {
+
+      document.getElementById("resultado").innerHTML = `
+        <div style="
+          color:#b00020;
+          font-weight:bold;
+        ">
+          ⚠️ ${data.mensaje}
+        </div>
+
+        <div>
+          ${data.codigo || ''}
+        </div>
+      `;
+    }
+
+    delete window[callback];
+
+    setTimeout(() => {
+      escaneoBloqueado = false;
+    }, 4000);
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+
+  const script =
+    document.createElement("script");
+
+
+  script.onerror = function() {
+
+    document.getElementById("resultado").innerHTML = `
+      <div style="
+        color:#b00020;
+        font-weight:bold;
+      ">
+        ⚠️ No se pudo conectar con el inventario
+      </div>
+    `;
+
+    delete window[callback];
+
+    setTimeout(() => {
+      escaneoBloqueado = false;
+    }, 4000);
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+
+  const vendedor =
+    document.getElementById("vendedor").value;
+
+  const canal =
+    document.getElementById("canal").value;
+
+
+  localStorage.setItem(
+    "vendedorLaIguana",
+    vendedor
+  );
+
+  localStorage.setItem(
+    "canalLaIguana",
+    canal
+  );
+
+
+  script.src =
+    URL_APPS_SCRIPT +
+    "?codigo=" + encodeURIComponent(codigo) +
+    "&vendedor=" + encodeURIComponent(vendedor) +
+    "&canal=" + encodeURIComponent(canal) +
+    "&callback=" + callback +
+    "&t=" + Date.now();
+
+
+  document.body.appendChild(script);
+}
+
+
+/* =========================
+   CANCELAR VENTA
+   ========================= */
+
+function cancelarVenta() {
+
+  document.getElementById("resultado").innerHTML =
+    "❌ Venta cancelada.<br><br>Esperando escaneo...";
+
+  ultimoCodigo = "";
+  ultimoEscaneo = 0;
+
+  setTimeout(() => {
+    escaneoBloqueado = false;
+  }, 500);
+}
     /* =========================
        ERRORES NORMALES DEL ESCÁNER
        ========================= */
