@@ -47,16 +47,72 @@
 
   <div id="reader"></div>
 
-  <div id="resultado">
-    Esperando escaneo...
-  </div>
+ <div id="resultado">
+  Esperando escaneo...
+</div>
+
+<button
+  onclick="probarConexion()"
+  style="
+    margin:20px;
+    padding:15px 25px;
+    font-size:18px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    background:white;
+  "
+>
+  🔌 Probar conexión
+</button>
 
   <script>
 
     const URL_APPS_SCRIPT =
       "https://script.google.com/macros/s/AKfycbwSOib7-PmhWK2_1OzvsvOM05CGLCTaTyuRlvTyh-eUG1bUksRPt-6ou5aZo0xjO-tNzQ/exec";
 
+function probarConexion() {
 
+  document.getElementById("resultado").innerHTML =
+    "⏳ Probando conexión...";
+
+  const callback = "pruebaConexion_" + Date.now();
+
+  window[callback] = function(data) {
+
+    document.getElementById("resultado").innerHTML =
+      data.ok
+        ? "✅ CONEXIÓN CORRECTA"
+        : "⚠️ Respuesta recibida";
+
+    delete window[callback];
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+  const script = document.createElement("script");
+
+  script.onerror = function() {
+
+    document.getElementById("resultado").innerHTML =
+      "❌ No se pudo recibir la respuesta";
+
+    delete window[callback];
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+  script.src =
+    "https://script.google.com/macros/s/AKfycbwSOib7-PmhWK2_1OzvsvOM05CGLCTaTyuRlvTyh-eUG1bUksRPt-6ou5aZo0xjO-tNzQ/exec" +
+    "?prueba=1" +
+    "&callback=" + callback +
+    "&t=" + Date.now();
+
+  document.body.appendChild(script);
+}
     function escaneoExitoso(codigo) {
 
       document.getElementById("resultado").innerHTML =
