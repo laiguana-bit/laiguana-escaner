@@ -36,26 +36,6 @@
       border-radius: 12px;
       font-size: 20px;
     }
-
-    .codigo {
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .producto {
-      font-size: 28px;
-      font-weight: bold;
-      margin: 10px 0;
-    }
-
-    .precio {
-      font-size: 24px;
-    }
-
-    .error {
-      color: #b00020;
-      font-weight: bold;
-    }
   </style>
 </head>
 
@@ -76,21 +56,13 @@
     const URL_APPS_SCRIPT =
       "https://script.google.com/macros/s/AKfycbwSOib7-PmhWK2_1OzvsvOM05CGLCTaTyuRlvTyh-eUG1bUksRPt-6ou5aZo0xjO-tNzQ/exec";
 
-    let procesando = false;
 
-
-    function registrarEnInventario(codigo) {
-
-      if (procesando) return;
-
-      procesando = true;
+    function escaneoExitoso(codigo) {
 
       document.getElementById("resultado").innerHTML =
         "⏳ Registrando venta...";
 
       const callback = "respuestaVenta_" + Date.now();
-
-      const script = document.createElement("script");
 
       window[callback] = function(data) {
 
@@ -99,11 +71,15 @@
           document.getElementById("resultado").innerHTML = `
             <div>✅ VENTA REGISTRADA</div>
 
-            <div class="producto">
+            <div style="
+              font-size:28px;
+              font-weight:bold;
+              margin:10px 0;
+            ">
               ${data.producto}
             </div>
 
-            <div class="precio">
+            <div style="font-size:24px;">
               $${Number(data.precio).toLocaleString('es-CO')}
             </div>
 
@@ -116,7 +92,10 @@
         } else {
 
           document.getElementById("resultado").innerHTML = `
-            <div class="error">
+            <div style="
+              color:#b00020;
+              font-weight:bold;
+            ">
               ⚠️ ${data.mensaje}
             </div>
 
@@ -126,8 +105,6 @@
           `;
         }
 
-        procesando = false;
-
         delete window[callback];
 
         if (script.parentNode) {
@@ -136,15 +113,19 @@
       };
 
 
+      const script = document.createElement("script");
+
+
       script.onerror = function() {
 
         document.getElementById("resultado").innerHTML = `
-          <div class="error">
+          <div style="
+            color:#b00020;
+            font-weight:bold;
+          ">
             ⚠️ No se pudo conectar con el inventario
           </div>
         `;
-
-        procesando = false;
 
         delete window[callback];
 
@@ -160,21 +141,13 @@
         "&callback=" + callback +
         "&t=" + Date.now();
 
+
       document.body.appendChild(script);
     }
 
 
-    function escaneoExitoso(codigo) {
-
-      registrarEnInventario(codigo);
-
-    }
-
-
     function errorEscaneo(error) {
-
       // Ignoramos los errores normales mientras busca un QR
-
     }
 
 
