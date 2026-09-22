@@ -49,32 +49,60 @@
 
   <!-- CANAL -->
 
+<!-- CANAL -->
+
 <label for="canal"><strong>Canal:</strong></label>
 
 <select
-id="canal"
-style="
-width:100%;
-padding:12px;
-font-size:18px;
-margin:10px 0;
-border-radius:8px;
-"
-
+  id="canal"
+  style="
+    width:100%;
+    padding:12px;
+    font-size:18px;
+    margin:10px 0;
+    border-radius:8px;
+  "
 >
+  <option value="">Selecciona un canal</option>
+  <option value="Coventalia">Coventalia</option>
+  <option value="SOFA">SOFA</option>
+  <option value="Comic-Con">Comic-Con</option>
+  <option value="Lupicon">Lupicon</option>
+</select>
 
-```
-<option value="Coventalia">Coventalia</option>
-```
+<div style="
+  display:flex;
+  gap:8px;
+  margin-bottom:15px;
+">
 
-```
-<option value="SOFA">SOFA</option>
-<option value="Comic-Con">Comic-Con</option>
-<option value="Lupicon">Lupicon</option>
-```
+  <input
+    id="nuevoCanal"
+    type="text"
+    placeholder="Nuevo canal"
+    style="
+      flex:1;
+      padding:12px;
+      font-size:16px;
+      border-radius:8px;
+      border:1px solid #ccc;
+    "
+  >
 
-  </select>
+  <button
+    onclick="agregarCanal()"
+    style="
+      padding:12px 15px;
+      font-size:16px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      background:white;
+    "
+  >
+    ➕ Añadir
+  </button>
 
+</div>
   <!-- VENDEDOR -->
 
 <label for="vendedor"><strong>Vendedor:</strong></label>
