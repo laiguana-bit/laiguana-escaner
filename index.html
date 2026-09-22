@@ -411,7 +411,7 @@ function agregarCanal() {
        REGISTRAR VENTA
        ========================= */
 
-  function escaneoExitoso(codigo) {
+function escaneoExitoso(codigo) {
 
   const ahora = Date.now();
 
@@ -427,52 +427,156 @@ function agregarCanal() {
   ultimoCodigo = codigo;
   ultimoEscaneo = ahora;
 
-  document.getElementById("resultado").innerHTML = `
-    <div style="
-      font-size:24px;
-      font-weight:bold;
-      margin-bottom:15px;
-    ">
-      🛒 Producto escaneado
-    </div>
+  document.getElementById("resultado").innerHTML =
+    "⏳ Consultando producto...";
 
-    <div style="
-      font-size:20px;
-      margin-bottom:20px;
-    ">
-      Código: <strong>${codigo}</strong>
-    </div>
+  const callback =
+    "consultaProducto_" + Date.now();
 
-    <button
-      onclick="confirmarVenta('${codigo}')"
-      style="
-        width:100%;
-        padding:18px;
-        font-size:20px;
+  window[callback] = function(data) {
+
+    if (data.ok) {
+
+      document.getElementById("resultado").innerHTML = `
+        <div style="
+          font-size:24px;
+          font-weight:bold;
+          margin-bottom:12px;
+        ">
+          🛒 Producto escaneado
+        </div>
+
+        <div style="
+          font-size:28px;
+          font-weight:bold;
+          margin:10px 0;
+        ">
+          ${data.producto}
+        </div>
+
+        <div style="font-size:20px;">
+          Código: <strong>${data.codigo}</strong>
+        </div>
+
+        <div style="
+          font-size:24px;
+          margin:10px 0;
+        ">
+          $${Number(data.precio).toLocaleString('es-CO')}
+        </div>
+
+        <div style="font-size:20px;">
+          Stock disponible:
+          <strong>${data.stock}</strong>
+        </div>
+
+        <button
+          onclick="confirmarVenta('${data.codigo}')"
+          style="
+            width:100%;
+            padding:18px;
+            font-size:20px;
+            font-weight:bold;
+            border-radius:10px;
+            border:0;
+            background:#d9f2d9;
+            margin-top:20px;
+            margin-bottom:10px;
+          "
+        >
+          ✅ CONFIRMAR VENTA
+        </button>
+
+        <button
+          onclick="cancelarVenta()"
+          style="
+            width:100%;
+            padding:15px;
+            font-size:18px;
+            border-radius:10px;
+            border:1px solid #ccc;
+            background:white;
+          "
+        >
+          ❌ CANCELAR
+        </button>
+      `;
+
+    } else {
+
+      document.getElementById("resultado").innerHTML = `
+        <div style="
+          color:#b00020;
+          font-weight:bold;
+        ">
+          ⚠️ ${data.mensaje}
+        </div>
+
+        <div>
+          ${data.codigo || ''}
+        </div>
+
+        <button
+          onclick="cancelarVenta()"
+          style="
+            width:100%;
+            padding:15px;
+            font-size:18px;
+            border-radius:10px;
+            border:1px solid #ccc;
+            background:white;
+            margin-top:15px;
+          "
+        >
+          Volver
+        </button>
+      `;
+    }
+
+    delete window[callback];
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+
+  const script =
+    document.createElement("script");
+
+
+  script.onerror = function() {
+
+    document.getElementById("resultado").innerHTML = `
+      <div style="
+        color:#b00020;
         font-weight:bold;
-        border-radius:10px;
-        border:0;
-        background:#d9f2d9;
-        margin-bottom:10px;
-      "
-    >
-      ✅ CONFIRMAR VENTA
-    </button>
+      ">
+        ⚠️ No se pudo consultar el producto
+      </div>
+    `;
 
-    <button
-      onclick="cancelarVenta()"
-      style="
-        width:100%;
-        padding:15px;
-        font-size:18px;
-        border-radius:10px;
-        border:1px solid #ccc;
-        background:white;
-      "
-    >
-      ❌ CANCELAR
-    </button>
-  `;
+    delete window[callback];
+
+    setTimeout(() => {
+      escaneoBloqueado = false;
+    }, 500);
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+
+  script.src =
+    URL_APPS_SCRIPT +
+    "?probar=1" +
+    "&codigo=" + encodeURIComponent(codigo) +
+    "&callback=" + callback +
+    "&t=" + Date.now();
+
+
+  document.body.appendChild(script);
 }
 /* =========================
    CONFIRMAR VENTA
