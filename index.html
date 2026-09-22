@@ -143,7 +143,22 @@ if (vendedorGuardado) {
     this.value
   );
 });
+  let escaneoBloqueado = false;
+let ultimoCodigo = "";
+let ultimoEscaneo = 0;
     function escaneoExitoso(codigo) {
+      const ahora = Date.now();
+
+if (
+  escaneoBloqueado ||
+  (codigo === ultimoCodigo && ahora - ultimoEscaneo < 4000)
+) {
+  return;
+}
+
+escaneoBloqueado = true;
+ultimoCodigo = codigo;
+ultimoEscaneo = ahora;
 
       document.getElementById("resultado").innerHTML =
         "⏳ Registrando venta...";
@@ -192,6 +207,9 @@ if (vendedorGuardado) {
         }
 
         delete window[callback];
+        setTimeout(() => {
+  escaneoBloqueado = false;
+}, 4000);
 
         if (script.parentNode) {
           script.parentNode.removeChild(script);
@@ -214,6 +232,9 @@ if (vendedorGuardado) {
         `;
 
         delete window[callback];
+        setTimeout(() => {
+  escaneoBloqueado = false;
+}, 4000);
 
         if (script.parentNode) {
           script.parentNode.removeChild(script);
