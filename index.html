@@ -137,6 +137,12 @@ function probarConexion() {
 if (vendedorGuardado) {
   document.getElementById("vendedor").value = vendedorGuardado;
 }
+    document.getElementById("vendedor").addEventListener("change", function() {
+  localStorage.setItem(
+    "vendedorLaIguana",
+    this.value
+  );
+});
     function escaneoExitoso(codigo) {
 
       document.getElementById("resultado").innerHTML =
