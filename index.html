@@ -87,7 +87,7 @@
       document.getElementById("resultado").innerHTML =
         "⏳ Registrando venta...";
 
-      const callback = "respuestaVenta";
+     const callback = "pruebaConexion_" + Date.now();
 
       window[callback] = function(data) {
 
