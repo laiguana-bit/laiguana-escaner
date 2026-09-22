@@ -209,11 +209,15 @@ function probarConexion() {
       };
 
 
-      script.src =
-        URL_APPS_SCRIPT +
-        "?codigo=" + encodeURIComponent(codigo) +
-        "&callback=" + callback +
-        "&t=" + Date.now();
+     const vendedor =
+  document.getElementById("vendedor").value;
+
+script.src =
+  URL_APPS_SCRIPT +
+  "?codigo=" + encodeURIComponent(codigo) +
+  "&vendedor=" + encodeURIComponent(vendedor) +
+  "&callback=" + callback +
+  "&t=" + Date.now();
 
 
       document.body.appendChild(script);
