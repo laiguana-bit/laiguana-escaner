@@ -234,6 +234,10 @@ background:white;
    CANALES
    ========================= */
 
+/* =========================
+   CANALES
+   ========================= */
+
 const selectCanal =
   document.getElementById("canal");
 
@@ -241,17 +245,53 @@ const inputNuevoCanal =
   document.getElementById("nuevoCanal");
 
 
-// Cargar canales guardados
-const canalesGuardados =
+// Canales permitidos inicialmente
+const canalesIniciales = [
+  "Lupicon 2026-2"
+];
+
+
+// Recuperar canales creados anteriormente
+let canalesGuardados =
   JSON.parse(
     localStorage.getItem("canalesLaIguana") || "[]"
   );
 
 
-// Agregar canales guardados al selector
-canalesGuardados.forEach(function(canal) {
+// Eliminar canales antiguos
+canalesGuardados =
+  canalesGuardados.filter(function(canal) {
+
+    return canal === "Lupicon 2026-2";
+
+  });
+
+
+// Guardar lista limpia
+localStorage.setItem(
+  "canalesLaIguana",
+  JSON.stringify(canalesGuardados)
+);
+
+
+// Agregar canales iniciales
+canalesIniciales.forEach(function(canal) {
 
   agregarOpcionCanal(canal);
+
+});
+
+
+// Agregar canales creados por el usuario
+canalesGuardados.forEach(function(canal) {
+
+  if (
+    !canalesIniciales.includes(canal)
+  ) {
+
+    agregarOpcionCanal(canal);
+
+  }
 
 });
 
@@ -277,6 +317,18 @@ selectCanal.addEventListener(
 // Crear opción en el selector
 function agregarOpcionCanal(canal) {
 
+  if (
+    Array.from(selectCanal.options)
+      .some(function(opcion) {
+
+        return opcion.value === canal;
+
+      })
+  ) {
+    return;
+  }
+
+
   const opcion =
     document.createElement("option");
 
@@ -298,16 +350,14 @@ function agregarCanal() {
   }
 
 
-  // Evitar duplicados
   const existe =
-    Array.from(
-      selectCanal.options
-    ).some(function(opcion) {
+    Array.from(selectCanal.options)
+      .some(function(opcion) {
 
-      return opcion.value.toLowerCase()
-        === nuevo.toLowerCase();
+        return opcion.value.toLowerCase()
+          === nuevo.toLowerCase();
 
-    });
+      });
 
 
   if (existe) {
@@ -327,11 +377,9 @@ function agregarCanal() {
   }
 
 
-  // Añadir al selector
   agregarOpcionCanal(nuevo);
 
 
-  // Guardar en lista permanente
   canalesGuardados.push(nuevo);
 
   localStorage.setItem(
@@ -340,7 +388,6 @@ function agregarCanal() {
   );
 
 
-  // Seleccionarlo automáticamente
   selectCanal.value = nuevo;
 
   localStorage.setItem(
@@ -351,8 +398,6 @@ function agregarCanal() {
 
   inputNuevoCanal.value = "";
 }
-
-
     /* =========================
        CONTROL DE ESCANEOS
        ========================= */
