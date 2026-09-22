@@ -131,6 +131,12 @@ function probarConexion() {
 
   document.body.appendChild(script);
 }
+    const vendedorGuardado =
+  localStorage.getItem("vendedorLaIguana");
+
+if (vendedorGuardado) {
+  document.getElementById("vendedor").value = vendedorGuardado;
+}
     function escaneoExitoso(codigo) {
 
       document.getElementById("resultado").innerHTML =
@@ -209,8 +215,10 @@ function probarConexion() {
       };
 
 
-     const vendedor =
+    const vendedor =
   document.getElementById("vendedor").value;
+
+localStorage.setItem("vendedorLaIguana", vendedor);
 
 script.src =
   URL_APPS_SCRIPT +
